@@ -15,7 +15,7 @@ class LogicsTest {
     private static final int CHESSBOARD_SIZE = 9;
     private static final int KNIGHT_MAX_MOVE = 2;
     private static final int KNIGHT_MIN_MOVE = 1;
-    private static final Pair<Integer, Integer> INITIAL_PAWN_POSITION = new Pair<>(3, 5);
+    private static final Pair<Integer, Integer> PAWN_POSITION = new Pair<>(3, 5);
     private static final Pair<Integer, Integer> INITIAL_KNIGHT_POSITION = new Pair<>(6, 2);
     private static final List<Pair<Integer, Integer>> NON_WINNING_LEGAL_HITS = List.of(
             new Pair<>(5, 4), new Pair<>(4, 2),
@@ -24,19 +24,19 @@ class LogicsTest {
             new Pair<>(6, 5), new Pair<>(8, 6)
     );
     private static final List<Pair<Integer, Integer>> ILLEGAL_HITS = List.of(new Pair<>(0, 0));
-    private static final Pair<Integer, Integer> WINNING_HIT = new Pair<>(0, 0);
+    private static final List<Pair<Integer, Integer>> WINNING_SEQUENCE = List.of(new Pair<>(5, 4), PAWN_POSITION);
 
     private Logics logics;
 
     @BeforeEach
     void setUp() {
-        this.logics = new LogicsImpl(CHESSBOARD_SIZE, INITIAL_PAWN_POSITION, INITIAL_KNIGHT_POSITION);
+        this.logics = new LogicsImpl(CHESSBOARD_SIZE, PAWN_POSITION, INITIAL_KNIGHT_POSITION);
     }
 
     @Test
     void testPiecesCorrectlyPlaced() {
         assertEquals(INITIAL_KNIGHT_POSITION, getKnightPosition());
-        assertEquals(INITIAL_PAWN_POSITION, getPawnPosition());
+        assertEquals(PAWN_POSITION, getPawnPosition());
     }
 
     @Test
@@ -63,7 +63,16 @@ class LogicsTest {
     @Test
     void testCannotMoveToIllegalPositions() {
         ILLEGAL_HITS.stream().peek(hitPosition -> assertFalse(this.logics.hit(hitPosition.getX(), hitPosition.getY())))
-                .forEach(hitPosition -> assertEquals(INITIAL_PAWN_POSITION, getKnightPosition()));
+                .forEach(hitPosition -> assertEquals(INITIAL_KNIGHT_POSITION, getKnightPosition()));
+    }
+
+    @Test
+    void testKnightCanWin() {
+        WINNING_SEQUENCE.stream()
+                .limit(WINNING_SEQUENCE.size() - 1)
+                .forEach(hitPosition -> this.logics.hit(hitPosition.getX(), hitPosition.getY()));
+        Pair<Integer, Integer> lastHitPosition = WINNING_SEQUENCE.get(WINNING_SEQUENCE.size()-1);
+        assertTrue(this.logics.hit(lastHitPosition.getX(), lastHitPosition.getY()));
     }
 
     private boolean testKnightMove(Pair<Integer, Integer> to) {
