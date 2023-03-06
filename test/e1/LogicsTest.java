@@ -54,12 +54,14 @@ class LogicsTest {
     }
 
     private boolean isAKnightLegalMove(Pair<Integer, Integer> from, Pair<Integer, Integer> to) {
+        int horizzontal_distance = Math.abs(from.getX() - to.getX());
+        int vertical_distance = Math.abs(from.getY() - to.getY());
         return to.getX() < CHESSBOARD_SIZE && to.getX() >= 0 && to.getY() < CHESSBOARD_SIZE && to.getY() >= 0
-                && Math.abs(from.getX() - to.getX()) == KNIGHT_MAX_MOVE
-                && Math.abs(from.getY() - to.getY()) == KNIGHT_MIN_MOVE
+                && horizzontal_distance == KNIGHT_MAX_MOVE
+                && vertical_distance == KNIGHT_MIN_MOVE
 
-                || Math.abs(from.getX() - to.getX()) == KNIGHT_MIN_MOVE
-                && Math.abs(from.getY() - to.getY()) == KNIGHT_MAX_MOVE;
+                || horizzontal_distance == KNIGHT_MIN_MOVE
+                && vertical_distance == KNIGHT_MAX_MOVE;
     }
 
     private Pair<Integer, Integer> getPawnPosition() {
