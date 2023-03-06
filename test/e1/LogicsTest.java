@@ -49,7 +49,7 @@ class LogicsTest {
     private Stream<Pair<Integer, Integer>> knightLegalMovesFrom(Pair<Integer, Integer> knightPosition) {
         return boardPositions()
                 .filter(position -> Math.abs(knightPosition.getY() - position.getY()) <= KNIGHT_MAX_MOVE)
-                .filter(position -> Math.abs(knightPosition.getX()) - position.getX() <= KNIGHT_MAX_MOVE)
+                .filter(position -> Math.abs(knightPosition.getX() - position.getX()) <= KNIGHT_MAX_MOVE)
                 .filter(position -> isAKnightLegalMove(knightPosition, position));
     }
 
