@@ -54,14 +54,15 @@ class LogicsTest {
     }
 
     private boolean isAKnightLegalMove(Pair<Integer, Integer> from, Pair<Integer, Integer> to) {
-        int horizzontal_distance = Math.abs(from.getX() - to.getX());
-        int vertical_distance = Math.abs(from.getY() - to.getY());
-        return to.getX() < CHESSBOARD_SIZE && to.getX() >= 0 && to.getY() < CHESSBOARD_SIZE && to.getY() >= 0
-                && horizzontal_distance == KNIGHT_MAX_MOVE
-                && vertical_distance == KNIGHT_MIN_MOVE
+        final int horizontalDistance = Math.abs(from.getX() - to.getX());
+        final int verticalDistance = Math.abs(from.getY() - to.getY());
+        return !isPositionOutOfBounds(to) && Math.min(horizontalDistance, verticalDistance) != 0
+                && horizontalDistance + verticalDistance == KNIGHT_MAX_MOVE + KNIGHT_MIN_MOVE;
+    }
 
-                || horizzontal_distance == KNIGHT_MIN_MOVE
-                && vertical_distance == KNIGHT_MAX_MOVE;
+    private boolean isPositionOutOfBounds(Pair<Integer, Integer> position) {
+        return position.getX() < CHESSBOARD_SIZE && position.getX() >= 0
+                && position.getY() < CHESSBOARD_SIZE && position.getY() >= 0;
     }
 
     private Pair<Integer, Integer> getPawnPosition() {
@@ -82,11 +83,7 @@ class LogicsTest {
     }
 
     private Stream<Pair<Integer, Integer>> boardPositions() {
-        return Stream.iterate(0, i -> i+1)
-                .limit(CHESSBOARD_SIZE)
-                .flatMap(i -> Stream.iterate(0, j -> j+1)
-                        .limit(CHESSBOARD_SIZE)
-                        .map(j -> new Pair<>(i, j))
-                );
+        return Stream.iterate(0, i -> i+1).limit(CHESSBOARD_SIZE)
+                .flatMap(i -> Stream.iterate(0, j -> j+1).limit(CHESSBOARD_SIZE).map(j -> new Pair<>(j, i)));
     }
 }
