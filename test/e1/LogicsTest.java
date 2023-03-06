@@ -12,6 +12,9 @@ class LogicsTest {
 
 
     public static final int CHESSBOARD_SIZE = 9;
+    public static final int KNIGHT_MAX_MOVE = 2;
+    public static final int KNIGHT_MIN_MOVE = 1;
+
     private Logics logics;
 
     @BeforeEach
@@ -45,15 +48,18 @@ class LogicsTest {
 
     private Stream<Pair<Integer, Integer>> knightLegalMovesFrom(Pair<Integer, Integer> knightPosition) {
         return boardPositions()
-                .filter(position -> Math.abs(knightPosition.getY() - position.getY()) <= 2)
-                .filter(position -> Math.abs(knightPosition.getX()) - position.getX() <= 2)
+                .filter(position -> Math.abs(knightPosition.getY() - position.getY()) <= KNIGHT_MAX_MOVE)
+                .filter(position -> Math.abs(knightPosition.getX()) - position.getX() <= KNIGHT_MAX_MOVE)
                 .filter(position -> isAKnightLegalMove(knightPosition, position));
     }
 
     private boolean isAKnightLegalMove(Pair<Integer, Integer> from, Pair<Integer, Integer> to) {
         return to.getX() < CHESSBOARD_SIZE && to.getX() >= 0 && to.getY() < CHESSBOARD_SIZE && to.getY() >= 0
-                && Math.abs(from.getX() - to.getX()) == 2 && Math.abs(from.getY() - to.getY()) == 1
-                || Math.abs(from.getX() - to.getX()) == 1 && Math.abs(from.getY() - to.getY()) == 2;
+                && Math.abs(from.getX() - to.getX()) == KNIGHT_MAX_MOVE
+                && Math.abs(from.getY() - to.getY()) == KNIGHT_MIN_MOVE
+
+                || Math.abs(from.getX() - to.getX()) == KNIGHT_MIN_MOVE
+                && Math.abs(from.getY() - to.getY()) == KNIGHT_MAX_MOVE;
     }
 
     private Pair<Integer, Integer> getPawnPosition() {
