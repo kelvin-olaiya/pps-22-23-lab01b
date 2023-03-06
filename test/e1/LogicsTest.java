@@ -11,9 +11,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class LogicsTest {
 
 
-    public static final int CHESSBOARD_SIZE = 9;
-    public static final int KNIGHT_MAX_MOVE = 2;
-    public static final int KNIGHT_MIN_MOVE = 1;
+    private static final int CHESSBOARD_SIZE = 9;
+    private static final int KNIGHT_MAX_MOVE = 2;
+    private static final int KNIGHT_MIN_MOVE = 1;
 
     private Logics logics;
 
@@ -66,14 +66,14 @@ class LogicsTest {
     }
 
     private Pair<Integer, Integer> getPawnPosition() {
-        return getPieceWith(this.logics::hasPawn);
+        return getPiecePositionWith(this.logics::hasPawn);
     }
 
     private Pair<Integer, Integer> getKnightPosition() {
-        return getPieceWith(this.logics::hasKnight);
+        return getPiecePositionWith(this.logics::hasKnight);
     }
 
-    private Pair<Integer, Integer> getPieceWith(BiPredicate<Integer, Integer> positionChecker) {
+    private Pair<Integer, Integer> getPiecePositionWith(BiPredicate<Integer, Integer> positionChecker) {
         return this.boardPositions()
                 .filter(position -> positionChecker.test(position.getY(), position.getX())).findFirst().get();
     }
