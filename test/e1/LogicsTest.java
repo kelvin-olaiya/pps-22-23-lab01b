@@ -23,7 +23,9 @@ class LogicsTest {
             new Pair<>(3, 8), new Pair<>(4, 6),
             new Pair<>(6, 5), new Pair<>(8, 6)
     );
-    private static final List<Pair<Integer, Integer>> ILLEGAL_HITS = List.of(new Pair<>(0, 0));
+    private static final List<Pair<Integer, Integer>> ILLEGAL_HITS = List.of(
+            new Pair<>(0, 0), new Pair<>(3, 3), new Pair<>(5, 7), new Pair<>(3, 6)
+    );
     private static final List<Pair<Integer, Integer>> WINNING_SEQUENCE = List.of(new Pair<>(5, 4), PAWN_POSITION);
 
     private Logics logics;
@@ -49,10 +51,48 @@ class LogicsTest {
         assertEquals(1, countPiecesOnBoardWith(this.logics::hasPawn));
     }
 
+    private long countPiecesOnBoardWith(BiPredicate<Integer, Integer> positionChecker) {
+        return this.boardPositions().filter(position -> positionChecker.test(position.getX(), position.getY())).count();
+    }
+
+    private Stream<Pair<Integer, Integer>> boardPositions() {
+        return Stream.iterate(0, i -> i+1).limit(CHESSBOARD_SIZE)
+                .flatMap(i -> Stream.iterate(0, j -> j+1).limit(CHESSBOARD_SIZE).map(j -> new Pair<>(i, j)));
+    }
+
     @Test
     void testKnightCanDoAllLegalMoves() {
          assertTrue(knightLegalMovesFrom(getKnightPosition()).allMatch(this::testKnightMove));
     }
+
+    private Stream<Pair<Integer, Integer>> knightLegalMovesFrom(Pair<Integer, Integer> knightPosition) {
+        return boardPositions()
+                .filter(position -> Math.abs(knightPosition.getY() - position.getY()) <= KNIGHT_MAX_MOVE)
+                .filter(position -> Math.abs(knightPosition.getX() - position.getX()) <= KNIGHT_MAX_MOVE)
+                .filter(position -> isAKnightLegalMove(knightPosition, position));
+    }
+
+    private boolean isAKnightLegalMove(Pair<Integer, Integer> from, Pair<Integer, Integer> to) {
+        final int verticalDistance = Math.abs(from.getX() - to.getX());
+        final int horizontalDistance = Math.abs(from.getY() - to.getY());
+        return !isPositionOutOfBounds(to) && Math.min(verticalDistance, horizontalDistance) != 0
+                && verticalDistance + horizontalDistance == KNIGHT_MAX_MOVE + KNIGHT_MIN_MOVE;
+    }
+
+    private boolean isPositionOutOfBounds(Pair<Integer, Integer> position) {
+        return position.getX() < CHESSBOARD_SIZE && position.getX() >= 0
+                && position.getY() < CHESSBOARD_SIZE && position.getY() >= 0;
+    }
+
+    private boolean testKnightMove(Pair<Integer, Integer> to) {
+        Pair<Integer, Integer> originalPosition = getKnightPosition();
+        assertDoesNotThrow(() -> {
+            this.logics.hit(to.getX(), to.getY());
+        });
+        this.logics.hit(originalPosition.getX(), originalPosition.getY());
+        return true;
+    }
+
     @Test
     void testKnightCanMoveWithoutWinning() {
         NON_WINNING_LEGAL_HITS.stream()
@@ -75,34 +115,6 @@ class LogicsTest {
         assertTrue(this.logics.hit(lastHitPosition.getX(), lastHitPosition.getY()));
     }
 
-    private boolean testKnightMove(Pair<Integer, Integer> to) {
-        Pair<Integer, Integer> originalPosition = getKnightPosition();
-        assertDoesNotThrow(() -> {
-            this.logics.hit(to.getX(), to.getY());
-        });
-        this.logics.hit(originalPosition.getX(), originalPosition.getY());
-        return true;
-    }
-
-    private Stream<Pair<Integer, Integer>> knightLegalMovesFrom(Pair<Integer, Integer> knightPosition) {
-        return boardPositions()
-                .filter(position -> Math.abs(knightPosition.getY() - position.getY()) <= KNIGHT_MAX_MOVE)
-                .filter(position -> Math.abs(knightPosition.getX() - position.getX()) <= KNIGHT_MAX_MOVE)
-                .filter(position -> isAKnightLegalMove(knightPosition, position));
-    }
-
-    private boolean isAKnightLegalMove(Pair<Integer, Integer> from, Pair<Integer, Integer> to) {
-        final int verticalDistance = Math.abs(from.getX() - to.getX());
-        final int horizontalDistance = Math.abs(from.getY() - to.getY());
-        return !isPositionOutOfBounds(to) && Math.min(verticalDistance, horizontalDistance) != 0
-                && verticalDistance + horizontalDistance == KNIGHT_MAX_MOVE + KNIGHT_MIN_MOVE;
-    }
-
-    private boolean isPositionOutOfBounds(Pair<Integer, Integer> position) {
-        return position.getX() < CHESSBOARD_SIZE && position.getX() >= 0
-                && position.getY() < CHESSBOARD_SIZE && position.getY() >= 0;
-    }
-
     private Pair<Integer, Integer> getPawnPosition() {
         return getPiecePositionWith(this.logics::hasPawn);
     }
@@ -114,14 +126,5 @@ class LogicsTest {
     private Pair<Integer, Integer> getPiecePositionWith(BiPredicate<Integer, Integer> positionChecker) {
         return this.boardPositions()
                 .filter(position -> positionChecker.test(position.getX(), position.getY())).findFirst().get();
-    }
-
-    private long countPiecesOnBoardWith(BiPredicate<Integer, Integer> positionChecker) {
-        return this.boardPositions().filter(position -> positionChecker.test(position.getX(), position.getY())).count();
-    }
-
-    private Stream<Pair<Integer, Integer>> boardPositions() {
-        return Stream.iterate(0, i -> i+1).limit(CHESSBOARD_SIZE)
-                .flatMap(i -> Stream.iterate(0, j -> j+1).limit(CHESSBOARD_SIZE).map(j -> new Pair<>(i, j)));
     }
 }
