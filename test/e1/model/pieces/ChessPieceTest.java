@@ -57,6 +57,13 @@ class ChessPieceTest {
                         assertTrue(this.piece.canMoveToPositionFrom(position, STARTING_POSITION))
                 );
         }
+
+        @Test
+        void testCannotMoveToIllegalPositions() {
+            ILLEGAL_MOVES.forEach(position ->
+                    assertFalse(this.piece.canMoveToPositionFrom(position, STARTING_POSITION))
+            );
+        }
     }
 
 }
