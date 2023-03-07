@@ -12,6 +12,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ChessPieceTest {
 
     protected ChessPiece piece;
+    protected PieceFactory pieceFactory;
+
+    @BeforeEach
+    void setUp() {
+        pieceFactory = new PieceFactoryImpl();
+    }
 
     static class TestStaticPawn extends ChessPieceTest {
 
@@ -22,7 +28,8 @@ class ChessPieceTest {
 
         @BeforeEach
         void setUp() {
-            this.piece = new StaticPawn();
+            super.setUp();
+            this.piece = pieceFactory.newStaticPawn();
         }
 
         @Test
@@ -48,7 +55,8 @@ class ChessPieceTest {
 
         @BeforeEach
         void setUp() {
-            this.piece = new Knight();
+            super.setUp();
+            this.piece = pieceFactory.newKnight();
         }
 
         @Test
