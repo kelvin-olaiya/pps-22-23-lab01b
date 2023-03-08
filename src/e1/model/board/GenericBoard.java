@@ -6,14 +6,16 @@ import e1.model.pieces.ChessPiece;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Random;
 
 public class GenericBoard implements ChessBoard {
 
+    private final Random random = new Random();
     private final Map<ChessPiece, Position> piecesPositions = new HashMap<>();
 
     @Override
     public int pieceCount() {
-        return 0;
+        return this.piecesPositions.size();
     }
 
     @Override
@@ -22,5 +24,19 @@ public class GenericBoard implements ChessBoard {
            return this.piecesPositions.get(piece);
         }
         throw new NoSuchElementException(piece + " was never added to this chessboard");
+    }
+
+    @Override
+    public Position addPieceInRandomPosition(ChessPiece piece) {
+        return this.piecesPositions.put(piece, this.randomEmptyPosition());
+    }
+
+    private Position randomEmptyPosition(){
+        Position position = new Position(this.random.nextInt(),this.random.nextInt());
+        return this.isPositionEmpty(position) ? position :  randomEmptyPosition();
+    }
+
+    private boolean isPositionEmpty(Position position) {
+        return !this.piecesPositions.containsValue(position);
     }
 }

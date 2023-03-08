@@ -6,7 +6,9 @@ import e1.model.pieces.PieceFactoryImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,6 +41,15 @@ class ChessBoardTest {
             assertThrows(NoSuchElementException.class, () -> {
                 this.chessBoard.getPiecePosition(pawn);
             });
+        }
+
+        @Test
+        void testCanAddPieces() {
+            int piecesToAdd = 6;
+            for (var i = 0; i < piecesToAdd; i++) {
+                this.chessBoard.addPieceInRandomPosition(this.pieceFactory.newStaticPawn());
+            }
+            assertEquals(piecesToAdd, this.chessBoard.pieceCount());
         }
     }
 }

@@ -7,4 +7,6 @@ public interface ChessBoard {
     int pieceCount();
 
     Position getPiecePosition(ChessPiece piece);
+
+    Position addPieceInRandomPosition(ChessPiece piece);
 }

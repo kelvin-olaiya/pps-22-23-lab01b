@@ -42,7 +42,7 @@ public class LogicsImpl implements Logics {
 	}
 
 	private boolean isPositionEmpty(final Position position) {
-		return this.positions.containsValue(position);
+		return !this.positions.containsValue(position);
 	}
     
 	@Override
