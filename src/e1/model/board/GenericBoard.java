@@ -28,6 +28,9 @@ public class GenericBoard implements ChessBoard {
 
     @Override
     public Position addPieceInRandomPosition(ChessPiece piece) {
+        if (this.piecesPositions.containsKey(piece)) {
+            throw new IllegalArgumentException(piece + " was already added to this board");
+        }
         return this.piecesPositions.put(piece, this.randomEmptyPosition());
     }
 
