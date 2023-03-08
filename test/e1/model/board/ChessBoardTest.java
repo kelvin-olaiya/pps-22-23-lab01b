@@ -90,6 +90,13 @@ class ChessBoardTest {
         }
 
         @Test
+        void testCannotMovePieceIfNotAdded() {
+            assertThrows(IllegalArgumentException.class, () -> {
+                this.chessBoard.movePieceToPosition(this.pieceFactory.newKnight(), new Position(0, 0));
+            });
+        }
+
+        @Test
         void testCantMoveToIllegalPositions() {
             final ChessPiece knight = this.pieceFactory.newKnight();
             this.chessBoard.addPieceIntoPosition(knight, new Position(3, 3));
@@ -112,6 +119,27 @@ class ChessBoardTest {
             assertTrue(eatenPiece.isPresent());
             assertEquals(pawn, eatenPiece.get());
             assertEquals(1, this.chessBoard.pieceCount());
+        }
+
+        static class SquaredBoardTest extends ChessBoardTest {
+
+            public static final int BOARD_SIZE = 3;
+
+            @BeforeEach
+            void setUp() {
+                super.setUp();
+                this.chessBoard = new SquareBoard(BOARD_SIZE);
+            }
+
+            @Test
+            void testCantAddPiecesOutOfBounds() {
+                assertThrows(IndexOutOfBoundsException.class, () -> {
+                   this.chessBoard.addPieceIntoPosition(this.pieceFactory.newKnight(), new Position(-1, 0));
+                });
+                assertThrows(IndexOutOfBoundsException.class, () -> {
+                    this.chessBoard.addPieceIntoPosition(this.pieceFactory.newKnight(), new Position(BOARD_SIZE + 1, 4));
+                });
+            }
         }
     }
 }

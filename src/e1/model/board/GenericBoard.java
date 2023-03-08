@@ -43,7 +43,9 @@ public class GenericBoard implements ChessBoard {
 
     @Override
     public Optional<ChessPiece> movePieceToPosition(ChessPiece piece, Position position) {
-        if (piece.canMoveToPositionFrom(position, this.getPiecePosition(piece))) {
+        if (!this.piecesPositions.containsKey(piece)) {
+            throw new IllegalArgumentException(piece + " is not on this board");
+        } else if (piece.canMoveToPositionFrom(position, this.getPiecePosition(piece))) {
             Optional<ChessPiece> eatenPiece = getPieceInPosition(position);
             piecesPositions.put(piece, position);
             eatenPiece.ifPresent(this::eatPiece);
