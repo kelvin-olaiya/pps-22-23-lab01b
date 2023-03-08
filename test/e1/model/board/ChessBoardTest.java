@@ -7,9 +7,7 @@ import e1.model.pieces.PieceFactoryImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,7 +35,7 @@ class ChessBoardTest {
         }
 
         @Test
-        void testCannotGetPositionBeforeAdding() {
+        void testCantGetPositionBeforeAdding() {
             ChessPiece pawn = this.pieceFactory.newStaticPawn();
             assertThrows(NoSuchElementException.class, () -> {
                 this.chessBoard.getPiecePosition(pawn);
@@ -76,6 +74,29 @@ class ChessBoardTest {
             this.chessBoard.addPieceIntoPosition(this.pieceFactory.newStaticPawn(), position);
             assertThrows(IllegalArgumentException.class, () -> {
                this.chessBoard.addPieceIntoPosition(this.pieceFactory.newStaticPawn(), position);
+            });
+        }
+
+        @Test
+        void testMovePieceToLegalPositions() {
+            final ChessPiece knight = this.pieceFactory.newKnight();
+            this.chessBoard.addPieceIntoPosition(knight, new Position(3, 3));
+            assertDoesNotThrow(() -> {
+                this.chessBoard.movePieceToPosition(knight, new Position(1, 4));
+                this.chessBoard.movePieceToPosition(knight, new Position(3, 3));
+                this.chessBoard.movePieceToPosition(knight, new Position(5, 2));
+            });
+        }
+
+        @Test
+        void testCantMoveToIllegalPositions() {
+            final ChessPiece knight = this.pieceFactory.newKnight();
+            this.chessBoard.addPieceIntoPosition(knight, new Position(3, 3));
+            assertThrows(IllegalArgumentException.class, () -> {
+               this.chessBoard.movePieceToPosition(knight, new Position(3, 3));
+            });
+            assertThrows(IllegalArgumentException.class, () -> {
+                this.chessBoard.movePieceToPosition(knight, new Position(6, 3));
             });
         }
     }

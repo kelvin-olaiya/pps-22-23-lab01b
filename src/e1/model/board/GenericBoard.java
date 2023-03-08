@@ -3,10 +3,7 @@ package e1.model.board;
 import e1.model.Position;
 import e1.model.pieces.ChessPiece;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Random;
+import java.util.*;
 
 public class GenericBoard implements ChessBoard {
 
@@ -29,7 +26,7 @@ public class GenericBoard implements ChessBoard {
     @Override
     public Position addPieceInRandomPosition(ChessPiece piece) {
         final Position randomPosition = this.randomEmptyPosition();
-        this.addPieceIntoPosition(piece, this.randomEmptyPosition());
+        this.addPieceIntoPosition(piece, randomPosition);
         return randomPosition;
     }
 
@@ -42,6 +39,24 @@ public class GenericBoard implements ChessBoard {
         }
         this.piecesPositions.put(piece, position);
         return position;
+    }
+
+    @Override
+    public Optional<ChessPiece> movePieceToPosition(ChessPiece piece, Position position) {
+        if (piece.canMoveToPositionFrom(position, this.getPiecePosition(piece))) {
+            Optional<ChessPiece> eatenPiece = getPieceInPosition(position);
+            piecesPositions.put(piece, position);
+            return eatenPiece;
+        }
+        throw new IllegalArgumentException(
+                piece + " is not allowed to move to " + position + " from " + getPiecePosition(piece)
+        );
+    }
+
+    private Optional<ChessPiece> getPieceInPosition(Position position) {
+        return this.piecesPositions.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(position))
+                .map(Map.Entry::getKey).findFirst();
     }
 
     private Position randomEmptyPosition(){
