@@ -9,4 +9,6 @@ public interface ChessBoard {
     Position getPiecePosition(ChessPiece piece);
 
     Position addPieceInRandomPosition(ChessPiece piece);
+
+    Position addPieceIntoPosition(ChessPiece piece, Position position);
 }

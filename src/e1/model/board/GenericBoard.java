@@ -28,10 +28,20 @@ public class GenericBoard implements ChessBoard {
 
     @Override
     public Position addPieceInRandomPosition(ChessPiece piece) {
+        final Position randomPosition = this.randomEmptyPosition();
+        this.addPieceIntoPosition(piece, this.randomEmptyPosition());
+        return randomPosition;
+    }
+
+    @Override
+    public Position addPieceIntoPosition(ChessPiece piece, Position position) {
         if (this.piecesPositions.containsKey(piece)) {
             throw new IllegalArgumentException(piece + " was already added to this board");
+        } else if (!isPositionEmpty(position)) {
+            throw new IllegalArgumentException("Another piece was already places in " + position);
         }
-        return this.piecesPositions.put(piece, this.randomEmptyPosition());
+        this.piecesPositions.put(piece, position);
+        return position;
     }
 
     private Position randomEmptyPosition(){

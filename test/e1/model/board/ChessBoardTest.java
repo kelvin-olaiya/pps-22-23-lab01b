@@ -1,5 +1,6 @@
 package e1.model.board;
 
+import e1.model.Position;
 import e1.model.pieces.ChessPiece;
 import e1.model.pieces.PieceFactory;
 import e1.model.pieces.PieceFactoryImpl;
@@ -58,6 +59,23 @@ class ChessBoardTest {
             this.chessBoard.addPieceInRandomPosition(pawn);
             assertThrows(IllegalArgumentException.class, () -> {
                this.chessBoard.addPieceInRandomPosition(pawn);
+            });
+        }
+
+        @Test
+        void testAddPieceToSpecificPosition() {
+            final ChessPiece pawn = this.pieceFactory.newStaticPawn();
+            final Position pawnPosition = new Position(1, 2);
+            this.chessBoard.addPieceIntoPosition(pawn, pawnPosition);
+            assertEquals(pawnPosition, this.chessBoard.getPiecePosition(pawn));
+        }
+
+        @Test
+        void testCantAddDifferentPiecesInTheSamePosition() {
+            final Position position = new Position(1, 2);
+            this.chessBoard.addPieceIntoPosition(this.pieceFactory.newStaticPawn(), position);
+            assertThrows(IllegalArgumentException.class, () -> {
+               this.chessBoard.addPieceIntoPosition(this.pieceFactory.newStaticPawn(), position);
             });
         }
     }
