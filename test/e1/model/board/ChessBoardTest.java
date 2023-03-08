@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -98,6 +99,19 @@ class ChessBoardTest {
             assertThrows(IllegalArgumentException.class, () -> {
                 this.chessBoard.movePieceToPosition(knight, new Position(6, 3));
             });
+        }
+
+        @Test
+        void testMovePieceAndEat() {
+            final ChessPiece pawn = this.pieceFactory.newStaticPawn();
+            final Position pawnPosition = new Position(5, 2);
+            final ChessPiece knight = this.pieceFactory.newKnight();
+            this.chessBoard.addPieceIntoPosition(pawn, pawnPosition);
+            this.chessBoard.addPieceIntoPosition(knight, new Position(3, 3));
+            Optional<ChessPiece> eatenPiece = this.chessBoard.movePieceToPosition(knight, pawnPosition);
+            assertTrue(eatenPiece.isPresent());
+            assertEquals(pawn, eatenPiece.get());
+            assertEquals(1, this.chessBoard.pieceCount());
         }
     }
 }

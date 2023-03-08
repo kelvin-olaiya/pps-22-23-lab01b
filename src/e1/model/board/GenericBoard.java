@@ -46,11 +46,16 @@ public class GenericBoard implements ChessBoard {
         if (piece.canMoveToPositionFrom(position, this.getPiecePosition(piece))) {
             Optional<ChessPiece> eatenPiece = getPieceInPosition(position);
             piecesPositions.put(piece, position);
+            eatenPiece.ifPresent(this::eatPiece);
             return eatenPiece;
         }
         throw new IllegalArgumentException(
                 piece + " is not allowed to move to " + position + " from " + getPiecePosition(piece)
         );
+    }
+
+    private void eatPiece(ChessPiece eatenPiece) {
+        this.piecesPositions.remove(eatenPiece);
     }
 
     private Optional<ChessPiece> getPieceInPosition(Position position) {
