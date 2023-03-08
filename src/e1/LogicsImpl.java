@@ -1,54 +1,75 @@
 package e1;
 
+import e1.model.Position;
+import e1.model.pieces.ChessPiece;
+import e1.model.pieces.PieceFactory;
+import e1.model.pieces.PieceFactoryImpl;
+
 import java.util.*;
 
 public class LogicsImpl implements Logics {
 	
-	private final Pair<Integer,Integer> pawn;
-	private Pair<Integer,Integer> knight;
+	private ChessPiece pawn;
+	private ChessPiece knight;
+
+	private final PieceFactory pieceFactory = new PieceFactoryImpl();
+	private final Map<ChessPiece, Position> positions = new HashMap<>();
 	private final Random random = new Random();
 	private final int size;
-	 
-    public LogicsImpl(int size){
-    	this.size = size;
-        this.pawn = this.randomEmptyPosition();
-        this.knight = this.randomEmptyPosition();	
+
+    public LogicsImpl(int size) {
+		this.size = size;
+		placePieces(this.randomEmptyPosition(), this.randomEmptyPosition());
+
     }
 
-	public LogicsImpl(int size, Pair<Integer, Integer> pawnPosition, Pair<Integer, Integer> knightPosition) {
+	public LogicsImpl(int size, Position pawnPosition, Position knightPosition) {
 		this.size = size;
-		this.pawn = pawnPosition;
-		this.knight = knightPosition;
+		placePieces(pawnPosition, knightPosition);
 	}
-    
-	private final Pair<Integer,Integer> randomEmptyPosition(){
-    	Pair<Integer,Integer> pos = new Pair<>(this.random.nextInt(size),this.random.nextInt(size));
-    	// the recursive call below prevents clash with an existing pawn
-    	return this.pawn!=null && this.pawn.equals(pos) ? randomEmptyPosition() : pos;
-    }
+
+	private void placePieces(Position pawnPosition, Position knightPosition) {
+		this.pawn = this.pieceFactory.newStaticPawn();
+		this.knight = this.pieceFactory.newKnight();
+		this.positions.put(this.pawn, pawnPosition);
+		this.positions.put(this.knight, knightPosition);
+	}
+
+	private Position randomEmptyPosition(){
+		Position position = new Position(this.random.nextInt(size),this.random.nextInt(size));
+		// the recursive call below prevents clash with an existing pawn
+		return this.isPositionEmpty(position) ? position :  randomEmptyPosition();
+	}
+
+	private boolean isPositionEmpty(final Position position) {
+		return this.positions.containsValue(position);
+	}
     
 	@Override
 	public boolean hit(int row, int col) {
 		if (row<0 || col<0 || row >= this.size || col >= this.size) {
 			throw new IndexOutOfBoundsException();
 		}
+		final Position newPosition = new Position(row, col);
 		// Below a compact way to express allowed moves for the knight
-		int x = row-this.knight.getX();
-		int y = col-this.knight.getY();
-		if (x!=0 && y!=0 && Math.abs(x)+Math.abs(y)==3) {
-			this.knight = new Pair<>(row,col);
-			return this.pawn.equals(this.knight);
+		if (canKnightMoveTo(newPosition)) {
+			this.positions.put(this.knight, newPosition);
+			return this.positions.get(this.pawn).equals(newPosition);
 		}
 		return false;
 	}
 
+	private boolean canKnightMoveTo(Position position) {
+		return this.knight.canMoveToPositionFrom(this.positions.get(this.knight), position);
+	}
+
 	@Override
 	public boolean hasKnight(int row, int col) {
-		return this.knight.equals(new Pair<>(row,col));
+		return this.positions.get(this.knight).equals(new Position(row, col));
 	}
 
 	@Override
 	public boolean hasPawn(int row, int col) {
-		return this.pawn.equals(new Pair<>(row,col));
+		return this.positions.get(this.pawn).equals(new Position(row, col));
 	}
 }

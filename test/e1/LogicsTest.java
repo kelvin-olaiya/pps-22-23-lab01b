@@ -1,5 +1,6 @@
 package e1;
 
+import e1.model.Position;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,18 +16,18 @@ class LogicsTest {
     private static final int CHESSBOARD_SIZE = 9;
     private static final int KNIGHT_MAX_MOVE = 2;
     private static final int KNIGHT_MIN_MOVE = 1;
-    private static final Pair<Integer, Integer> PAWN_POSITION = new Pair<>(3, 5);
-    private static final Pair<Integer, Integer> INITIAL_KNIGHT_POSITION = new Pair<>(6, 2);
-    private static final List<Pair<Integer, Integer>> NON_WINNING_LEGAL_HITS = List.of(
-            new Pair<>(5, 4), new Pair<>(4, 2),
-            new Pair<>(3, 4), new Pair<>(2, 6),
-            new Pair<>(3, 8), new Pair<>(4, 6),
-            new Pair<>(6, 5), new Pair<>(8, 6)
+    private static final Position PAWN_POSITION = new Position(3, 5);
+    private static final Position INITIAL_KNIGHT_POSITION = new Position(6, 2);
+    private static final List<Position> NON_WINNING_LEGAL_HITS = List.of(
+            new Position(5, 4), new Position(4, 2),
+            new Position(3, 4), new Position(2, 6),
+            new Position(3, 8), new Position(4, 6),
+            new Position(6, 5), new Position(8, 6)
     );
-    private static final List<Pair<Integer, Integer>> ILLEGAL_HITS = List.of(
-            new Pair<>(0, 0), new Pair<>(3, 3), new Pair<>(5, 7), new Pair<>(3, 6)
+    private static final List<Position> ILLEGAL_HITS = List.of(
+            new Position(0, 0), new Position(3, 3), new Position(5, 7), new Position(3, 6)
     );
-    private static final List<Pair<Integer, Integer>> WINNING_SEQUENCE = List.of(new Pair<>(5, 4), PAWN_POSITION);
+    private static final List<Position> WINNING_SEQUENCE = List.of(new Position(5, 4), PAWN_POSITION);
 
     private Logics logics;
 
@@ -55,9 +56,9 @@ class LogicsTest {
         return this.boardPositions().filter(position -> positionChecker.test(position.getX(), position.getY())).count();
     }
 
-    private Stream<Pair<Integer, Integer>> boardPositions() {
+    private Stream<Position> boardPositions() {
         return Stream.iterate(0, i -> i+1).limit(CHESSBOARD_SIZE)
-                .flatMap(i -> Stream.iterate(0, j -> j+1).limit(CHESSBOARD_SIZE).map(j -> new Pair<>(i, j)));
+                .flatMap(i -> Stream.iterate(0, j -> j+1).limit(CHESSBOARD_SIZE).map(j -> new Position(i, j)));
     }
 
     @Test
@@ -65,7 +66,7 @@ class LogicsTest {
          assertTrue(knightLegalMovesFrom(getKnightPosition()).allMatch(this::testKnightMove));
     }
 
-    private Stream<Pair<Integer, Integer>> knightLegalMovesFrom(Pair<Integer, Integer> knightPosition) {
+    private Stream<Position> knightLegalMovesFrom(Pair<Integer, Integer> knightPosition) {
         return boardPositions()
                 .filter(position -> Math.abs(knightPosition.getY() - position.getY()) <= KNIGHT_MAX_MOVE)
                 .filter(position -> Math.abs(knightPosition.getX() - position.getX()) <= KNIGHT_MAX_MOVE)
@@ -115,15 +116,15 @@ class LogicsTest {
         assertTrue(this.logics.hit(lastHitPosition.getX(), lastHitPosition.getY()));
     }
 
-    private Pair<Integer, Integer> getPawnPosition() {
+    private Position getPawnPosition() {
         return getPiecePositionWith(this.logics::hasPawn);
     }
 
-    private Pair<Integer, Integer> getKnightPosition() {
+    private Position getKnightPosition() {
         return getPiecePositionWith(this.logics::hasKnight);
     }
 
-    private Pair<Integer, Integer> getPiecePositionWith(BiPredicate<Integer, Integer> positionChecker) {
+    private Position getPiecePositionWith(BiPredicate<Integer, Integer> positionChecker) {
         return this.boardPositions()
                 .filter(position -> positionChecker.test(position.getX(), position.getY())).findFirst().get();
     }
