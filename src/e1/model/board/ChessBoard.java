@@ -6,6 +6,7 @@ import e1.model.pieces.ChessPiece;
 import java.util.Optional;
 
 public interface ChessBoard {
+
     int pieceCount();
 
     Position getPiecePosition(ChessPiece piece);
