@@ -67,7 +67,8 @@ public class ChessBoardImpl implements ChessBoard {
         this.piecesPositions.remove(eatenPiece);
     }
 
-    private Optional<ChessPiece> getPieceInPosition(Position position) {
+    @Override
+    public Optional<ChessPiece> getPieceInPosition(Position position) {
         checkIfOutOfBounds(position);
         return this.piecesPositions.entrySet().stream()
                 .filter(entry -> entry.getValue().equals(position))

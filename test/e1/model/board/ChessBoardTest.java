@@ -74,6 +74,18 @@ class ChessBoardTest {
     }
 
     @Test
+    void testGetPieceInEmptyPosition() {
+        assertEquals(Optional.empty(), this.chessBoard.getPieceInPosition(new Position(0, 0)));
+    }
+
+    @Test
+    void testGetPieceInPosition() {
+        final ChessPiece pawn = this.pieceFactory.newStaticPawn();
+        final Position pawnPosition = this.chessBoard.addPieceInRandomPosition(pawn);
+        assertEquals(Optional.of(pawn), this.chessBoard.getPieceInPosition(pawnPosition));
+    }
+
+    @Test
     void testMovePieceToLegalPositions() {
         final ChessPiece knight = this.pieceFactory.newKnight();
         this.chessBoard.addPieceIntoPosition(knight, KNIGHT_POSITION);

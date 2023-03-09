@@ -16,4 +16,6 @@ public interface ChessBoard {
     Position addPieceIntoPosition(ChessPiece piece, Position position);
 
     Optional<ChessPiece> movePieceToPosition(ChessPiece piece, Position position);
+
+    Optional<ChessPiece> getPieceInPosition(Position position);
 }
