@@ -7,6 +7,7 @@ import e1.model.pieces.PieceFactoryImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -15,6 +16,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class ChessBoardTest {
 
     private static final int BOARD_SIZE = 9;
+    private static final Position PAWN_POSITION = new Position(1, 2);
+    private static final Position KNIGHT_POSITION = new Position(3, 3);
     protected ChessBoard chessBoard;
     protected PieceFactory pieceFactory;
 
@@ -58,58 +61,54 @@ class ChessBoardTest {
     @Test
     void testAddPieceToSpecificPosition() {
         final ChessPiece pawn = this.pieceFactory.newStaticPawn();
-        final Position pawnPosition = new Position(1, 2);
-        this.chessBoard.addPieceIntoPosition(pawn, pawnPosition);
-        assertEquals(pawnPosition, this.chessBoard.getPiecePosition(pawn));
+        this.chessBoard.addPieceIntoPosition(pawn, PAWN_POSITION);
+        assertEquals(PAWN_POSITION, this.chessBoard.getPiecePosition(pawn));
     }
 
     @Test
     void testCantAddDifferentPiecesInTheSamePosition() {
-        final Position position = new Position(1, 2);
-        this.chessBoard.addPieceIntoPosition(this.pieceFactory.newStaticPawn(), position);
+        this.chessBoard.addPieceIntoPosition(this.pieceFactory.newStaticPawn(), PAWN_POSITION);
         assertThrows(IllegalArgumentException.class, () -> {
-            this.chessBoard.addPieceIntoPosition(this.pieceFactory.newStaticPawn(), position);
+            this.chessBoard.addPieceIntoPosition(this.pieceFactory.newStaticPawn(), PAWN_POSITION);
         });
     }
 
     @Test
     void testMovePieceToLegalPositions() {
         final ChessPiece knight = this.pieceFactory.newKnight();
-        this.chessBoard.addPieceIntoPosition(knight, new Position(3, 3));
-        assertDoesNotThrow(() -> {
-            this.chessBoard.movePieceToPosition(knight, new Position(1, 4));
-            this.chessBoard.movePieceToPosition(knight, new Position(3, 3));
-            this.chessBoard.movePieceToPosition(knight, new Position(5, 2));
-        });
+        this.chessBoard.addPieceIntoPosition(knight, KNIGHT_POSITION);
+        final List<Position> legalMoves = List.of(new Position(1, 4), KNIGHT_POSITION, new Position(5, 2));
+        legalMoves.forEach(position -> assertDoesNotThrow(() -> this.chessBoard.movePieceToPosition(knight, position)));
     }
 
     @Test
     void testCannotMovePieceIfNotAdded() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            this.chessBoard.movePieceToPosition(this.pieceFactory.newKnight(), new Position(0, 0));
-        });
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> this.chessBoard.movePieceToPosition(this.pieceFactory.newKnight(), new Position(0, 0))
+        );
     }
 
     @Test
     void testCantMoveToIllegalPositions() {
         final ChessPiece knight = this.pieceFactory.newKnight();
-        this.chessBoard.addPieceIntoPosition(knight, new Position(3, 3));
-        assertThrows(IllegalArgumentException.class, () -> {
-            this.chessBoard.movePieceToPosition(knight, new Position(3, 3));
-        });
-        assertThrows(IllegalArgumentException.class, () -> {
-            this.chessBoard.movePieceToPosition(knight, new Position(6, 3));
-        });
+        final List<Position> illegalMoves = List.of(KNIGHT_POSITION, new Position(6, 3));
+        this.chessBoard.addPieceIntoPosition(knight, KNIGHT_POSITION);
+        illegalMoves.forEach(position ->
+                assertThrows(
+                        IllegalArgumentException.class,
+                        () -> this.chessBoard.movePieceToPosition(knight, position)
+                )
+        );
     }
 
     @Test
     void testMovePieceAndEat() {
         final ChessPiece pawn = this.pieceFactory.newStaticPawn();
-        final Position pawnPosition = new Position(5, 2);
         final ChessPiece knight = this.pieceFactory.newKnight();
-        this.chessBoard.addPieceIntoPosition(pawn, pawnPosition);
-        this.chessBoard.addPieceIntoPosition(knight, new Position(3, 3));
-        Optional<ChessPiece> eatenPiece = this.chessBoard.movePieceToPosition(knight, pawnPosition);
+        this.chessBoard.addPieceIntoPosition(pawn, PAWN_POSITION);
+        this.chessBoard.addPieceIntoPosition(knight, KNIGHT_POSITION);
+        Optional<ChessPiece> eatenPiece = this.chessBoard.movePieceToPosition(knight, PAWN_POSITION);
         assertTrue(eatenPiece.isPresent());
         assertEquals(pawn, eatenPiece.get());
         assertEquals(1, this.chessBoard.pieceCount());
@@ -117,14 +116,14 @@ class ChessBoardTest {
 
     @Test
     void testCantAddPiecesOutOfBounds() {
-        assertThrows(IndexOutOfBoundsException.class, () -> {
-            this.chessBoard.addPieceIntoPosition(this.pieceFactory.newKnight(), new Position(-1, 0));
-        });
-        assertThrows(IndexOutOfBoundsException.class, () -> {
-            this.chessBoard.addPieceIntoPosition(
-                    this.pieceFactory.newKnight(),
-                    new Position(BOARD_SIZE + 1, 4)
-            );
-        });
+        final List<Position> outOfBoundsPositions = List.of(
+                new Position(-1, 0), new Position(BOARD_SIZE + 1, 4)
+        );
+        outOfBoundsPositions.forEach(position ->
+            assertThrows(
+                    IndexOutOfBoundsException.class,
+                    () -> this.chessBoard.addPieceIntoPosition(this.pieceFactory.newKnight(), position)
+            )
+        );
     }
 }
