@@ -53,9 +53,7 @@ class ChessBoardTest {
     void testCantAddTheSamePieceTwice() {
         final ChessPiece pawn = this.pieceFactory.newStaticPawn();
         this.chessBoard.addPieceInRandomPosition(pawn);
-        assertThrows(IllegalArgumentException.class, () -> {
-            this.chessBoard.addPieceInRandomPosition(pawn);
-        });
+        assertThrows(IllegalArgumentException.class, () -> this.chessBoard.addPieceInRandomPosition(pawn));
     }
 
     @Test
