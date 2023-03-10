@@ -1,0 +1,67 @@
+package e2.model;
+
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+public class GridImpl implements Grid {
+
+    private final Set<Cell> cellWithBombs = new HashSet<>();
+    private final Set<Cell> flaggedCells = new HashSet<>();
+    private final Random random = new Random();
+    private final int size;
+
+    public GridImpl(int gridSize, int numberOfBombs) {
+        this.size = gridSize;
+        this.placeBombs(numberOfBombs);
+    }
+
+    private void placeBombs(int numberOfBombs) {
+        for (int i = 0; i < numberOfBombs; i++) {
+            cellWithBombs.add(getEmptyCell());
+        }
+    }
+
+    private Cell getEmptyCell() {
+        var cell = new Cell(random.nextInt(this.size), random.nextInt(this.size));
+        return cellWithBombs.contains(cell) ? getEmptyCell() : cell;
+    }
+
+    @Override
+    public Collection<Cell> cells() {
+        return Stream.iterate(0, i -> i + 1)
+                .limit(this.size)
+                .flatMap(i -> Stream.iterate(0, j -> j + 1).limit(this.size).map(j -> new Cell(i, j)))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public int bombsCount() {
+        return this.cellWithBombs.size();
+    }
+
+    @Override
+    public boolean isFlagged(Cell cell) {
+        return this.flaggedCells.contains(cell);
+    }
+
+    @Override
+    public void toggleFlag(Cell cell) {
+        if (isFlagged(cell)) {
+            this.flaggedCells.remove(cell);
+        } else {
+            this.flaggedCells.add(cell);
+        }
+    }
+
+    @Override
+    public boolean hasBomb(Cell cell) {
+        return this.cellWithBombs.contains(cell);
+    }
+
+    @Override
+    public Collection<Cell> adjacentCells(Cell cell) {
+        System.out.println();
+        return this.cells().stream().filter(cell::isAdjacentTo).peek(System.out::println).toList();
+    }
+}
