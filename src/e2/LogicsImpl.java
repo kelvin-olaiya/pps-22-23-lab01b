@@ -12,6 +12,7 @@ public class LogicsImpl implements Logics {
 
     private final Grid grid;
     private final Set<Cell> hittedCells = new HashSet<>();
+    private final Set<Cell> flaggedCells = new HashSet<>();
 
     public LogicsImpl(int size, int numberOfBombs) {
         this.grid = new GridImpl(size, numberOfBombs);
@@ -38,12 +39,17 @@ public class LogicsImpl implements Logics {
 
     @Override
     public void toggleFlag(int row, int column) {
-        this.grid.toggleFlag(new Cell(row, column));
+        var cell = new Cell(row, column);
+        if (this.hasFlag(row, column)) {
+            this.flaggedCells.remove(cell);
+        } else {
+            this.flaggedCells.add(cell);
+        }
     }
 
     @Override
     public boolean hasFlag(int row, int column) {
-        return this.grid.isFlagged(new Cell(row, column));
+        return this.flaggedCells.contains(new Cell(row, column));
     }
 
     @Override

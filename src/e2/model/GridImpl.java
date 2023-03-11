@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 public class GridImpl implements Grid {
 
     private final Set<Cell> cellWithBombs = new HashSet<>();
-    private final Set<Cell> flaggedCells = new HashSet<>();
     private final Random random = new Random();
     private final int size;
 
@@ -38,20 +37,6 @@ public class GridImpl implements Grid {
     @Override
     public int bombsCount() {
         return this.cellWithBombs.size();
-    }
-
-    @Override
-    public boolean isFlagged(Cell cell) {
-        return this.flaggedCells.contains(cell);
-    }
-
-    @Override
-    public void toggleFlag(Cell cell) {
-        if (isFlagged(cell)) {
-            this.flaggedCells.remove(cell);
-        } else {
-            this.flaggedCells.add(cell);
-        }
     }
 
     @Override

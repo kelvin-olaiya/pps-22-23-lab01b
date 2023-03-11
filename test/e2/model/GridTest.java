@@ -29,16 +29,6 @@ class GridTest {
     }
 
     @Test
-    void testCanToggleAFlag() {
-        var cellToToggle = new Cell(4, 4);
-        assertFalse(this.grid.isFlagged(cellToToggle));
-        this.grid.toggleFlag(cellToToggle);
-        assertTrue(this.grid.isFlagged(cellToToggle));
-        this.grid.toggleFlag(cellToToggle);
-        assertFalse(this.grid.isFlagged(cellToToggle));
-    }
-
-    @Test
     void testGridCellHasBombs() {
         assertEquals(NUM_BOMBS, gridCellsStream().filter(this.grid::hasBomb).count());
     }

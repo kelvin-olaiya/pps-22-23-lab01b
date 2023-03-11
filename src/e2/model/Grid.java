@@ -8,10 +8,6 @@ public interface Grid {
 
     int bombsCount();
 
-    boolean isFlagged(Cell cell);
-
-    void toggleFlag(Cell cell);
-
     boolean hasBomb(Cell cell);
 
     Collection<Cell> adjacentCells(Cell cell);
