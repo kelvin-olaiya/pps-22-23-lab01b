@@ -15,4 +15,8 @@ public interface Grid {
     boolean hasBomb(Cell cell);
 
     Collection<Cell> adjacentCells(Cell cell);
+
+    int adjacentBombs(Cell cell);
+
+    int size();
 }

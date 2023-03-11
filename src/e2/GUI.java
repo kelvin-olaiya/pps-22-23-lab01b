@@ -27,14 +27,15 @@ public class GUI extends JFrame {
         ActionListener onClick = (e)->{
             final JButton bt = (JButton)e.getSource();
             final Pair<Integer,Integer> pos = buttons.get(bt);
-            boolean aMineWasFound = true; // call the logic here to tell it that cell at 'pos' has been seleced
+            boolean aMineWasFound = this.logics.hit(pos.getX(), pos.getY()); // call the logic here to tell it that cell at 'pos' has been seleced
             if (aMineWasFound) {
                 quitGame();
                 JOptionPane.showMessageDialog(this, "You lost!!");
             } else {
+                bt.setEnabled(false);
                 drawBoard();            	
             }
-            boolean isThereVictory = false; // call the logic here to ask if there is victory
+            boolean isThereVictory = this.logics.hasWon(); // call the logic here to ask if there is victory
             if (isThereVictory){
                 quitGame();
                 JOptionPane.showMessageDialog(this, "You won!!");
@@ -48,7 +49,7 @@ public class GUI extends JFrame {
                 final JButton bt = (JButton)e.getSource();
                 if (bt.isEnabled()){
                     final Pair<Integer,Integer> pos = buttons.get(bt);
-                    // call the logic here to put/remove a flag
+                    logics.toggleFlag(pos.getX(), pos.getY());
                 }
                 drawBoard(); 
             }
@@ -75,14 +76,20 @@ public class GUI extends JFrame {
             if (this.logics.hasBomb(position.getX(), position.getY())) {
                 button.setText("*");
             }
+            button.setEnabled(false);
     	}
     }
 
     private void drawBoard() {
         for (var entry: this.buttons.entrySet()) {
-            // call the logic here
-            // if this button is a cell with counter, put the number
-            // if this button has a flag, put the flag
+            var pos = entry.getValue();
+            var button = entry.getKey();
+            var adjacentBombs = this.logics.adjacentBombs(pos.getX(), pos.getY());
+            button.setText(this.logics.hasFlag(pos.getX(), pos.getY()) ? "F" : " ");
+            adjacentBombs.ifPresent(count -> {
+                button.setEnabled(false);
+                button.setText(String.valueOf(count));
+            });
     	}
     }
     

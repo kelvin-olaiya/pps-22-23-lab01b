@@ -61,7 +61,16 @@ public class GridImpl implements Grid {
 
     @Override
     public Collection<Cell> adjacentCells(Cell cell) {
-        System.out.println();
-        return this.cells().stream().filter(cell::isAdjacentTo).peek(System.out::println).toList();
+        return this.cells().stream().filter(cell::isAdjacentTo).toList();
+    }
+
+    @Override
+    public int adjacentBombs(Cell cell) {
+        return (int) this.adjacentCells(cell).stream().filter(this::hasBomb).count();
+    }
+
+    @Override
+    public int size() {
+        return this.size * this.size;
     }
 }
