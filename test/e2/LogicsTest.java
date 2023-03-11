@@ -45,7 +45,7 @@ class LogicsTest {
     }
 
     @Test
-    void testHittedCellsAdjacentBombs() {
+    void testHitCellsAdjacentBombs() {
         randomClearPositions(RANDOM_POSITIONS_TO_TEST).forEach(position -> {
             assertFalse(this.logics.hit(position.getX(), position.getY()));
             var numberOfBombs = (int) this.adjacentPositions(position)
@@ -58,7 +58,7 @@ class LogicsTest {
     }
 
     @Test
-    void testUnhittedCellsAdjacentBombs() {
+    void testUnhitCellsAdjacentBombs() {
         randomClearPositions(RANDOM_POSITIONS_TO_TEST).forEach(position -> {
             assertEquals(Optional.empty(), this.logics.adjacentBombs(position.getX(), position.getY()));
         });

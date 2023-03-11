@@ -11,7 +11,7 @@ import java.util.Set;
 public class LogicsImpl implements Logics {
 
     private final Grid grid;
-    private final Set<Cell> hittedCells = new HashSet<>();
+    private final Set<Cell> hitCells = new HashSet<>();
     private final Set<Cell> flaggedCells = new HashSet<>();
 
     public LogicsImpl(int size, int numberOfBombs) {
@@ -25,13 +25,13 @@ public class LogicsImpl implements Logics {
 
     @Override
     public boolean hit(int row, int column) {
-        var hittedCell = new Cell(row, column);
-        this.hittedCells.add(hittedCell);
-        if (this.grid.hasBomb(hittedCell)) {
+        var hitCell = new Cell(row, column);
+        this.hitCells.add(hitCell);
+        if (this.grid.hasBomb(hitCell)) {
             return true;
-        } else if (this.grid.adjacentBombs(hittedCell) == 0) {
-            this.grid.adjacentCells(hittedCell).stream()
-                    .filter(cell -> !this.hittedCells.contains(cell))
+        } else if (this.grid.adjacentBombs(hitCell) == 0) {
+            this.grid.adjacentCells(hitCell).stream()
+                    .filter(cell -> !this.hitCells.contains(cell))
                     .forEach(cell -> this.hit(cell.getX(), cell.getY()));
         }
         return false;
@@ -55,11 +55,11 @@ public class LogicsImpl implements Logics {
     @Override
     public Optional<Integer> adjacentBombs(int row, int column) {
         var cell = new Cell(row, column);
-        return this.hittedCells.contains(cell) ? Optional.of(this.grid.adjacentBombs(cell)) : Optional.empty();
+        return this.hitCells.contains(cell) ? Optional.of(this.grid.adjacentBombs(cell)) : Optional.empty();
     }
 
     @Override
     public boolean hasWon() {
-        return this.hittedCells.size() == (this.grid.size() - this.grid.bombsCount());
+        return this.hitCells.size() == (this.grid.size() - this.grid.bombsCount());
     }
 }
