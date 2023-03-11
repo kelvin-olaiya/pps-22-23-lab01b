@@ -13,7 +13,7 @@ class LogicsTest {
 
     private static final int GRID_SIZE = 6;
     private static final int NUM_OF_BOMBS = 5;
-    public static final int RANDOM_POSITIONS_TO_TEST = 10;
+    private static final int RANDOM_POSITIONS_TO_TEST = 10;
     private Logics logics;
 
     @BeforeEach

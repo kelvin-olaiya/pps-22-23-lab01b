@@ -12,9 +12,9 @@ class GridTest {
 
     private static final int NUM_BOMBS = 7;
     private static final int GRID_SIZE = 5;
-    public static final int CORNER_ADJACENT_CELLS = 3;
-    public static final int SIDE_ADJACENT_CELLS = 5;
-    public static final int MIDDLE_ADJACENT_CELLS = 8;
+    private static final int CORNER_ADJACENT_CELLS = 3;
+    private static final int SIDE_ADJACENT_CELLS = 5;
+    private static final int MIDDLE_ADJACENT_CELLS = 8;
 
     private Grid grid;
 
