@@ -30,11 +30,15 @@ public class LogicsImpl implements Logics {
         if (this.grid.hasBomb(hitCell)) {
             return true;
         } else if (this.grid.adjacentBombs(hitCell) == 0) {
-            this.grid.adjacentCells(hitCell).stream()
-                    .filter(cell -> !this.hitCells.contains(cell))
-                    .forEach(cell -> this.hit(cell.getRow(), cell.getColumn()));
+            hitAdjacentCells(hitCell);
         }
         return false;
+    }
+
+    private void hitAdjacentCells(Cell hitCell) {
+        this.grid.adjacentCells(hitCell).stream()
+                .filter(cell -> !this.hitCells.contains(cell))
+                .forEach(cell -> this.hit(cell.getRow(), cell.getColumn()));
     }
 
     @Override
