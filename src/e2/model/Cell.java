@@ -7,6 +7,7 @@ import java.util.Objects;
 public class Cell {
 
     private final Pair<Integer, Integer> position;
+
     public Cell(Integer row, Integer column) {
         this.position = new Pair<>(row, column);
     }
