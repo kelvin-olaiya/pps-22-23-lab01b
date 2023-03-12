@@ -32,7 +32,7 @@ public class LogicsImpl implements Logics {
         } else if (this.grid.adjacentBombs(hitCell) == 0) {
             this.grid.adjacentCells(hitCell).stream()
                     .filter(cell -> !this.hitCells.contains(cell))
-                    .forEach(cell -> this.hit(cell.getX(), cell.getY()));
+                    .forEach(cell -> this.hit(cell.getRow(), cell.getColumn()));
         }
         return false;
     }
